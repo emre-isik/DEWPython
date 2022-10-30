@@ -8,6 +8,10 @@ V 2.0.0
 
 The DEW package allows the user to compute the thermodynamic and elastic properties of various aqueous inputs for a general range of 100-1200C and a pressure range of 1.0-60 Kb. It is based on the [DEW spreadsheet](http://www.dewcommunity.org/) and behaves similarly.The DEW package additionally provides integrated support for [SUPCRTBL](https://models.earth.indiana.edu/supcrtbl.php) and can be used to directly import and compare species between the two models.
 
+V 2.0.1
+
+Automatic input function updated (2022/10/30). Now you can use it in the form as shown in `examples/auto-input-example.ipynb`.
+
 ## Getting Started
 
 This section provide a basic example on the running of DEW. Because the input fields are interactive, it relies on user input in order to function (which cannot be demonstrated here). [Full documentation](https://chandr3w.github.io/DEW_amchan/) for the class is available externally.

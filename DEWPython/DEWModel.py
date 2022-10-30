@@ -416,6 +416,8 @@ class DEW(object):
             if inp == "":
                 break
             self.aqueousInputs.append([inp, inp2])
+            print('Now printing self.aqueousInputs.append')
+            print(self.aqueousInputs)
             
             
         while gasCount < 15:
@@ -1373,7 +1375,8 @@ class DEW(object):
         return
     def run(self, pt_arr, min_inp =[], aq_inp = [], g_inp = [], h2o_inp = 0, min_out = [],aq_out =[], g_out = [],h2o_out = 0, 
         ptInp = 'Psat', rhoWat = 'Z&D 2005', forceBool = False, dieEQ = 'Supcrt', forceSC = True, 
-        WFEQ ='D&H 1978', dsV = True, pdsV = True, DV = True, EQ = 1, dEQ = 1, pst = True, mWn = 1, makeP = False):
+            WFEQ ='D&H 1978', dsV = True, pdsV = True, DV = True, makePlots = False):
+#EI# cancelled options: , EQ = 1, dEQ = 1, pst = True, mWn = 1):
 
         if h2o_inp > 0:
             self.waterInputs = [['yes',h2o_inp]]
@@ -1402,15 +1405,51 @@ class DEW(object):
         self.DisplayVolOpt = dsV
         self.PsatDisplayVol = pdsV
         self.DisplayVol = DV
-        self.equation = EQ
-        self.diaEq = dEQ
-        self.psat = pst
-        self.waterDensity = mWn
 
+ #EI#    self.equation = EQ
+ #       self.diaEq = dEQ
+ #       self.psat = pst
+ #       self.waterDensity = mWn
+
+# EI # EI copied the following block from the main code, to replace the above
+# EI # commented block.
+# EI # The last condition -WaterFreeEq- copied from func calculate_H2O(self).
+# code to set options in a way the equations can understand
+        if self.ptInput == "Psat":
+            self.psat = True
+        else:
+            self.psat = False
+            
+        if self.RhoOfWater =='Z&D 2005':
+            self.equation = 1
+        elif self.RhoOfWater == 'Z&D 2009':
+            self.equation = 2
+        else:
+            self.equation = 3
+            
+        if self.dielectricEq == "Supcrt":
+            self.diaEq = 1
+        elif self.dielectricEq == "Franck":
+            self.diaEq = 2
+        elif self.dielectricEq == "Fernandez":
+            self.diaEq = 3
+        elif self.dielectricEq == "Sverjensky":
+            self.diaEq = 4
+        else:
+            self.diaEq = 5
+# EI # WaterFreeEq condition copied from func calculate_H2O(self).
+        if self.WaterFreeEq == 'D&H 1978':
+            self.waterDensity = 1
+        elif self.WaterFreeEq == 'Integral':
+            self.waterDensity = 2
+        else:
+            self.waterDensity = 3
+            # EI ###################### EI #
+        
         # to actually run:
         self.set_tp(pt_arr)
         self.calculate()
-        if makeP == True:
+        if makePlots == True:
             self.make_plots()
         return
        
