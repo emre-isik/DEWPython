@@ -10,7 +10,7 @@ The DEW package allows the user to compute the thermodynamic and elastic propert
 
 V 2.0.1
 
-Automatic input function updated (2022/10/30). Now you can use it in the form as shown in `examples/auto-input-example.ipynb`.
+Automatic input function updated (2022/10/30). Now you can use it in the form as shown in `examples/auto-input-example.ipynb`. Beware: this is a beta release. You can use it only by cloning this repository into your local disk, then importing DEWPython according to the location of the cloned repository. 
 
 ## Getting Started
 
