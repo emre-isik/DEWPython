@@ -1164,8 +1164,7 @@ class DEW(object):
         if len(self.mineralInputs) > 0:
             for i in range(len(self.mineralInputs)):
                 if self.psat == False:
-#EI#                    myMinPath = mineralDictionary2
-                    myMinPath = mineralDictionary
+                    myMinPath = mineralDictionary2
                 else: 
                     myMinPath = mineralDictionary
                 for temp in self.tempUsed:
