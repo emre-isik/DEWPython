@@ -9,7 +9,7 @@ import json
 import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 from matplotlib.lines import Line2D
-get_ipython().run_line_magic('matplotlib', 'inline')
+#get_ipython().run_line_magic('matplotlib', 'inline')
 from collections import defaultdict
 import pkg_resources
 import os.path as op

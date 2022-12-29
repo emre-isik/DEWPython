@@ -23,7 +23,7 @@ import json
 import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 from matplotlib.lines import Line2D
-get_ipython().run_line_magic('matplotlib', 'inline') # I don't think this is important, but is still ere
+#get_ipython().run_line_magic('matplotlib', 'inline') # I don't think this is important, but is still ere
 from collections import defaultdict
 
 # path and pkg_resources are used to reference downloaded files in the package
@@ -747,16 +747,18 @@ class DEW(object):
                     templow = int(input('Input the minimum temperature'))
                     temphigh = int(input('Input the maximum temperature'))
                     tempstep = int(input('Input the temperature step'))
-                    pmin = float(input('Input the minimum pressure (Kb)'))
-                    pmax = float(input('Input the maximum pressure (Kb)'))
-                    pstep = float(input('Input the pressure step (Kb)'))
+                    pmin = float(input('Input the minimum pressure (kb)'))
+                    pmax = float(input('Input the maximum pressure (kb)'))
+                    pstep = float(input('Input the pressure step (kb)'))
                     validBool = True
                 except ValueError:
                     print('You have entered a non-integer value, please start again')
             tempArr = np.arange(start= templow, stop = temphigh + .00001, step = tempstep)
+#EI         parrHelp: pmin-pmax asked in kb, hence parrHelp in kb
             parrHelp = np.arange(start= pmin, stop = pmax + .00001, step = pstep)
             for i in range(len(parrHelp)):
                 pressArr.append([parrHelp[i]]* len(tempArr))
+#EI         Now the pressure is being converted to bars, by multiplying by 1k. 
             pressArr = np.multiply(pressArr, 1000)
             tempArr = [tempArr] * len(parrHelp)
             
@@ -783,6 +785,7 @@ class DEW(object):
             # If I've done the checking correctly above it should never reach this
             raise ValueError("You have not set your options yet, please set them before continuing")
         self.tempUsed = np.ndarray.flatten(np.asarray(tempArr))
+#EI     pressureUsed is in bars.
         self.pressureUsed = np.ndarray.flatten(np.asarray(pressArr))
         self.tKelvin = np.add(self.tempUsed, 273.15)
         
@@ -1161,7 +1164,8 @@ class DEW(object):
         if len(self.mineralInputs) > 0:
             for i in range(len(self.mineralInputs)):
                 if self.psat == False:
-                    myMinPath = mineralDictionary2
+#EI#                    myMinPath = mineralDictionary2
+                    myMinPath = mineralDictionary
                 else: 
                     myMinPath = mineralDictionary
                 for temp in self.tempUsed:
@@ -1191,6 +1195,7 @@ class DEW(object):
         if self.ptInput!= 'Psat' or self.psat == False:
             self.pressRed = list(set(self.pressureUsed))
             self.tempRed = list(set(self.tempUsed))
+#EI            self.tKRed = np.add(self.tempUsed, 273.15)
             self.pressRed.sort()
             self.tempRed.sort()
             
@@ -1576,12 +1581,12 @@ class DEW(object):
         dV = [row[0] for row in self.delV]
         dG = [row[0] for row in self.delG]
         lK = [row[0] for row in self.logK]
-        T = [row[1] for row in self.logK]
+        T = [row[1]+273.15 for row in self.logK]
         P = [row[2] for row in self.logK]
         output_array = np.column_stack([T,P, dV,dG,lK])
         df = pd.DataFrame(output_array)
         df.columns = ['Temperature','Pressure','delV','delG','LogK']
-        name = input('Input the name of the CSV file')
+        name = input('Input the name of the CSV file: ')
         finalName = name + ".csv"
         df.to_csv(finalName, index = False)
         

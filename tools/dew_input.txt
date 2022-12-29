@@ -1,0 +1,8 @@
+min_inp =[], aq_inp = [['CO2,aq', '1'], ['H2,aq', '4']], g_inp = [], h2o_inp = 0, min_out = [],aq_out =[['METHANE,AQ','1']], g_out = [], h2o_out = 2, ptInp = 'Regular', rhoWat = 'Z&D 2005', forceBool = False, dieEQ = 'Sverjensky', forceSC = False, WFEQ ='D&H 1978', dsV = False, pdsV = False, DV = False, makePlots = False
+
+reaction.run(pt_arr, 
+             min_inp =['FAYALITE','3'], aq_inp = [],g_inp = [], h2o_inp = 2,
+             min_out = ['MAGNETITE','2'],aq_out =[['SiO2,aq','3'],['H2,aq','2']], g_out = [],h2o_out = 0,
+             ptInp = 'Regular', rhoWat = 'Z&D 2009', forceBool = False, 
+             dieEQ = 'Supcrt', forceSC = True, WFEQ ='D&H 1978', dsV = False, 
+             pdsV = False, DV = False, makePlots = False)
