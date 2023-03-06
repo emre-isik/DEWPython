@@ -12,6 +12,10 @@ V 2.0.1
 
 Automatic input function updated (2022/10/30). Now you can use it in the form as shown in `examples/auto-input-example.ipynb`. Beware: this is a beta release. You can use it only by cloning this repository into your local disk, then importing DEWPython according to the location of the cloned repository. 
 
+V 2.0.2
+
+SUPCRT96 integration fixed (2023/03/06). One SUPCRT calculator and one plotter notebook added. `examples/supcrt*.ipynb`. Beware: this is a beta release. You can use it only by cloning this repository into your local disk, then importing DEWPython according to the location of the cloned repository. 
+
 ## Getting Started
 
 This section provide a basic example on the running of DEW. Because the input fields are interactive, it relies on user input in order to function (which cannot be demonstrated here). [Full documentation](https://chandr3w.github.io/DEW_amchan/) for the class is available externally.
