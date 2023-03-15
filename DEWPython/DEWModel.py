@@ -59,7 +59,7 @@ g_path = '/'.join(('resources', 'water_gibbs.csv'))
 gPath = pkg_resources.resource_filename(resource_package, g_path)
 
 # paths for supcrt
-sup_path = '/'.join(('resources', 'supcrt96.exe'))
+sup_path = '/'.join(('resources', 'supcrt96.x'))
 supPath =  pkg_resources.resource_filename(resource_package, sup_path)
 
 global Tr, bigQ, Chi, Pr, E_PrTr, bigR, Psi, Theta, Upsilon, Conversion, mineralDictionary
@@ -1588,7 +1588,27 @@ class DEW(object):
         name = input('Input the name of the CSV file: ')
         finalName = name + ".csv"
         df.to_csv(finalName, index = False)
+
+    def export_supcrt_to_csv(self):
+        keyname = next(iter(self.supcrtOut))
+        temp = self.supcrtOut[keyname]['Temperature']
+        pres = self.supcrtOut[keyname]['Pressure']
+        dV = self.supcrtOut[keyname]['delV']
+        dG = self.supcrtOut[keyname]['delG']
+        lK = self.supcrtOut[keyname]['LogK']
+        T = [row+273.15 for row in temp]
+        P = [row for row in pres]
+        dV0 = [row for row in dV]
+        dG0 = [row for row in dG]
+        lK0 = [row for row in lK]
         
+        output_array = np.column_stack([T,P, dV0,dG0,lK0])
+        df = pd.DataFrame(output_array)
+        df.columns = ['Temperature','Pressure','delV','delG','LogK']
+        name = input('Input the name of the CSV file: ')
+        finalName = name + ".csv"
+        df.to_csv(finalName, index = False)
+
     def options(self):
         print('Welcome to DEWPython, here are the options you can run:')
         print('1. DEW(): this initializes a Deep Earth Water Model Object')
@@ -1634,7 +1654,7 @@ class DEW(object):
             sup_path = '/'.join(('resources', 'SUPCRTBL.exe'))
             supPath =  pkg_resources.resource_filename(resource_package, sup_path)
         else:
-            sup_path = '/'.join(('resources', 'supcrt96.exe'))
+            sup_path = '/'.join(('resources', 'supcrt96.x'))
             supPath =  pkg_resources.resource_filename(resource_package, sup_path)
         self.proc = subprocess.Popen(supPath,shell = True, stdout = subprocess.PIPE, stdin = subprocess.PIPE, stderr = subprocess.STDOUT)
         self.pout = self.proc.stdout
@@ -1655,7 +1675,7 @@ class DEW(object):
         returnLst = {}
        
         if customFile != None:
-            filename = op.dirname(op.abspath(os.getcwd()))+ '\\' + customFile
+            filename = op.dirname(op.abspath(os.getcwd()))+ '//' + customFile
         elif len(self.supcrtFile) ==0:
             raise ValueError("You haven't run SUPCRT yet")
         else:
@@ -1776,7 +1796,7 @@ class DEW(object):
     def supcrt_inp(self, rxn_lst, title, reaction_type = 'psat'):
         '''Takes a list of reaction lists (comprised of tuples) and runs supcrt'''
         for reaction in rxn_lst:
-            sup_path = '/'.join(('resources', 'supcrt96.exe'))
+            sup_path = '/'.join(('resources', 'supcrt96.x'))
             supPath =  pkg_resources.resource_filename(resource_package, sup_path)
             self.proc = subprocess.Popen(supPath,stdout=subprocess.PIPE, stdin=subprocess.PIPE,stderr=subprocess.STDOUT, shell=True)
             
@@ -1828,7 +1848,7 @@ class DEW(object):
         max_temp = float(max_temp)
         max_press = float(max_press)
         if customFile != None:
-            file_Path = op.dirname(op.abspath(os.getcwd()))+ '\\' + customFile
+            file_Path = op.dirname(op.abspath(os.getcwd()))+ '//' + customFile
         elif len(self.supcrtFile) ==0:
             raise ValueError("You haven't run SUPCRT yet")
         else:
@@ -1844,14 +1864,15 @@ class DEW(object):
             try:
                 if 'REACTION TITLE' in split[i]:
                     returnVar = " ".join(split[i+1].split()).split(' ')[0]
+                    print(returnVar)
                 elif '************************************ REACTION' in split[i]:
                     returnVar = " ".join(split[i+4].split()).split(' ')[0]
             except:
                 continue
             if 'STANDARD STATE PROPERTIES OF THE REACTION AT ELEVATED TEMPERATURES AND PRESSURES' in split[i]:
                 subLst = []
-                temp = []
                 pres = []
+                temp = []
                 DH2 = []
                 lgK = []
                 dlG = []
@@ -1860,37 +1881,42 @@ class DEW(object):
                 dlV = []
                 dlCp = []
                 subDict = {}
-                for item in split[(i+7):]:
+             #EI, for supcrt96 output (std list)           for item in split[(i+7):]:
+                for item in split[(i+4):]:
                     try:
                         if len(item) > 0:
                             subLst = (" ".join(item.split())).split(' ')
-                            temp.append(subLst[0])
-                            pres.append(subLst[1])
+                            pres.append(subLst[0])
+                            temp.append(subLst[1])
                             DH2.append(subLst[2])
                             lgK.append(subLst[3])
                             dlG.append(subLst[4])
                             dlH.append(subLst[5])
                             dlS.append(subLst[6]) 
                             dlV.append(subLst[7])
-                            dlCp.append(subLst[8])   
-                        if float(subLst[0]) == max_temp and float(subLst[1]) == max_press:
+                            dlCp.append(subLst[8])
+#EI                        if float(subLst[0]) == max_temp and float(subLst[1]) == max_press:
+                        if float(subLst[0]) == max_press and float(subLst[1]) == max_temp:
                             break
                     except:
                         continue
-                subDict['Temperature'] = [float(i) for i in temp]
                 subDict['Pressure'] = [float(i) for i in pres]
-                subDict['DH2O'] = [float(i) for i in DH2]
+                subDict['Temperature'] = [float(i) for i in temp]
+                print(subDict['Pressure'])
+                print(subDict['Temperature'])
+                storeLst = []
+                for i in DH2:
+                    if  i =='***' or i =='NaN':
+                        storeLst.append(0)
+                    else:
+                        storeLst.append(i)
+                subDict['DH2O'] = storeLst #[float(i) for i in DH2]
                 subDict['LogK'] = [float(i) for i in lgK]
                 subDict['delG'] = [float(i) for i in dlG]
                 subDict['delH'] = [float(i) for i in dlH]
                 subDict['delS'] = [float(i) for i in dlS]
-                storeLst = []
-                for i in dlV:
-                    if  i =='*********' or i =='NaN':
-                        storeLst.append(0)
-                    else:
-                        storeLst.append(i)
-                subDict['delV'] = storeLst
+#                for i in dlV:
+                subDict['delV'] = [float(i) for i in dlV] #storeLst
                 subDict['delCp'] = [float(i) for i in dlCp]
                 returnLst[returnVar] = subDict
             self.supcrtOut = returnLst
